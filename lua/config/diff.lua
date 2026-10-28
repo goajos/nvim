@@ -1,0 +1,15 @@
+--[[
+-- git config --global diff.tool nvimdiff
+-- git config --global merge.tool nvimdiff
+-- git config --global difftool.prompt false
+-- git config --global mergetool.prompt false
+--
+-- git difftool <file>
+-- git difftool <b1>..<b2>
+--
+-- ]c: jump to next diff
+-- [c: jump to prev diff
+-- do: diff obtain (pull changes from other buffer)
+-- dp: diff put (put changes to other buffer)
+--
+--]]

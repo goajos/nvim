@@ -141,6 +141,12 @@ local function setup_keymaps()
 		local buf = vim.api.nvim_get_current_buf()
 		remove_buffer(win, buf)
 	end, { silent = true, desc = "Remove the current buffer, if it's the last buffer it will also close the window" })
+	vim.keymap.set("n", "<leader>dB", function()
+		for _i, win in ipairs(vim.api.nvim_list_wins()) do
+			C.windows[win] = nil
+		end
+		vim.cmd("%bd")
+	end, { silent = true, desc = "Remove all buffers and clear all winbars" })
 end
 
 function C.setup()
