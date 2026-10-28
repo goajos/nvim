@@ -18,31 +18,32 @@ local function get_content(buf, name, icon, btype)
     return ""
 	end
 	local parts = vim.split(name, "/", { plain = true })
-	return tostring(buf) .. ": " .. icon .. " " .. parts[#parts]
+	return buf .. ": " .. icon .. " " .. parts[#parts]
 end
 
-local windows = {}
 
-local function update_windows(active_win, buf)
-  if vim.bo[buf].filetype == "directory" then
+local function update_windows(active_win, active_buf)
+  if vim.bo[active_buf].filetype == "directory" then
     return
   end
 
   for _, win in ipairs(vim.api.nvim_list_wins()) do
     if win == active_win then
-      if not windows[win].buffers[buf] then
-        local name = vim.api.nvim_buf_get_name(buf)
-        local icon = icon_mod.get_icon(buf, name)
-        local btype = vim.bo[buf].buftype
-        local content = get_content(buf, name, icon, btype)
+      if not M.windows[win].buffer_content[active_buf] then
+        local name = vim.api.nvim_buf_get_name(active_buf)
+        local icon = icon_mod.get_icon(active_buf, name)
+        local btype = vim.bo[active_buf].buftype
+        local content = get_content(active_buf, name, icon, btype)
+        -- empty buffers is invalid?
         if content == "" then
           goto continue
         end
 
-        windows[win].buffers[buf] = table.concat({" ", content, " "})
+        M.windows[win].buffer_content[active_buf] = table.concat({" ", content, " "})
+        table.insert(M.windows[win].buffer_list, active_buf)
 
         vim.wo[win].winbar = "%!v:lua.winbar_content()"
-        vim.notify("M.winbar: added buffer name " .. name .. " to window " .. active_win, vim.log.levels.INFO)
+        vim.notify("M.winbar: added buffer " .. active_buf .. " to window " .. active_win, vim.log.levels.INFO)
       end
     end
     ::continue::
@@ -50,37 +51,48 @@ local function update_windows(active_win, buf)
 end
 
 local function remove_buffer(win, active_buf)
-  local prev_buf = nil
-  for buf, _content in pairs(windows[win].buffers) do
-    if buf == active_buf then 
-      windows[win].buffers[buf] = nil
-      vim.notify("M.winbar: removed buffer " .. active_buf .. " from window " .. win, vim.log.levels.INFO)
-      break
-    else
-      prev_buf = buf
-    end
-  end
+    local buffer_list = M.windows[win].buffer_list 
+    local cnt = #buffer_list 
+    local prev_idx = -1
+    if cnt > 1 then
+      for i, buf in ipairs(buffer_list) do
+        if buf == active_buf then
+          break
+        else
+          prev_idx = i
+        end
+      end
 
-  if prev_buf and vim.api.nvim_buf_is_valid(prev_buf) then
-    vim.api.nvim_win_set_buf(win, prev_buf)
-  else
-    -- close the window if there is not previous buffer
-    if vim.api.nvim_win_is_valid(win) then
+      if prev_idx > 0 then
+        M.windows[win].buffer_content[active_buf] = nil
+        table.remove(buffer_list, buffer_list[active_buf])
+        vim.notify("M.winbar: removed buffer " .. active_buf .. " from window " .. win, vim.log.levels.INFO)
+        vim.api.nvim_win_set_buf(win, buffer_list[prev_idx])
+      elseif vim.fn.winnr("$") ~= 1 then
+          vim.api.nvim_win_close(win, false)
+          vim.notify("M.winbar: closed window " .. win, vim.log.levels.INFO)
+      end
+    elseif vim.fn.winnr("$") ~= 1 then
+      M.windows[win].buffer_content[active_buf] = nil
+      table.remove(buffer_list, buffer_list[active_buf])
+      vim.notify("M.winbar: removed buffer " .. active_buf .. " from window " .. win, vim.log.levels.INFO)
       vim.api.nvim_win_close(win, false)
       vim.notify("M.winbar: closed window " .. win, vim.log.levels.INFO)
+    else
+      vim.notify("M.winbar: can't close last buffer " .. active_buf .. " in main window " .. win, vim.log.levels.INFO)
     end
-  end
-  
-end
+ end
 
 function _G.winbar_content()
 	local win = vim.g.statusline_winid or vim.api.nvim_get_current_win()
-  if not windows[win] or not windows[win].buffers then
+  if not M.windows[win] or not M.windows[win].buffer_content then
     return ""
   end
 
   local result = {}
-  for buf, content in pairs(windows[win].buffers) do
+  table.insert(result, table.concat({win, ":"}))
+  for _i, buf in ipairs(M.windows[win].buffer_list) do
+    local content = M.windows[win].buffer_content[buf]
     if vim.api.nvim_get_current_buf() == buf and vim.api.nvim_get_current_win() == win then
       table.insert(result, table.concat({"%#ActiveBuf#", content, "%*"}))
     else
@@ -95,62 +107,50 @@ function _G.winbar_content()
   return table.concat(result, " ")
 end
 
-local augroup = vim.api.nvim_create_augroup("WinBarUserAuGroup", { clear = true })
-function M.setup()
-  vim.api.nvim_set_hl(0, "ActiveBuf", color_mod.colors.active)
-
-  vim.api.nvim_create_autocmd("BufEnter", {
+local function setup_autocmds(augroup)
+  vim.api.nvim_create_autocmd({"BufWinEnter", "WinNew"} , {
     group=augroup,
     callback=function(args)
+      local win = args.win 
       local buf = args.buf
-      local win = args.win
-      if vim.bo[buf].buftype == "help" then
-        vim.wo[win].winbar = nil
-      end
-
-      if not windows[win] then
-        windows[win] = { buffers = {} } 
-        vim.notify("M.winbar BufEnter: created new window entry " .. win, vim.log.levels.INFO)
+      if not M.windows[win] then
+        M.windows[win] = { buffer_content = {}, buffer_list = {} } 
+        vim.notify("M.winbar: created new window entry " .. win, vim.log.levels.INFO)
       end
       update_windows(win, buf)
-
-      -- remove buffer with <leader>db, if it's the last buffer it will also close the winndow
-      vim.keymap.set("n", "<leader>db", function()
-        remove_buffer(win, buf)
-      end, { buffer = buf,  silent = true})
   end
   })
-  vim.api.nvim_create_autocmd("WinNew", {
-    group=augroup,
-    callback=function(args)
-      local buf = args.buf
-      local win = args.win
-      if vim.bo[buf].buftype == "help" then
-        vim.wo[win].winbar = nil
-      end
+end
 
-      if not windows[win] then
-        windows[win] = { buffers = {} } 
-        vim.notify("M.winbar WinNew: created new window entry " .. win, vim.log.levels.INFO)
-      end
-      update_windows(win, buf)
-    end
-  })
-
+local function setup_keymaps()
   -- if the target buffer is valid for the current window:
   --   - switch to previous buffer with <leader>b
   --   - switch to vim.v.count buffer with #<leader>b
   vim.keymap.set("n", "<leader>b", function()
     local active_win = vim.api.nvim_get_current_win()
     local target_buf = vim.v.count > 0 and vim.v.count or vim.fn.bufnr("#")
-    if vim.api.nvim_buf_is_valid(target_buf) and windows[active_win].buffers[target_buf] then
+    if vim.api.nvim_buf_is_valid(target_buf) and M.windows[active_win].buffer_content[target_buf] then
       return "<cmd>" .. target_buf .. "b<cr>"
     end
     vim.notify("M.winbar: invalid buffer " .. target_buf .. " for window " .. active_win, vim.log.levels.INFO)
     return
   end, { expr = true, silent = true})
 
+  -- remove buffer with <leader>db, if it's the last buffer it will also close the winndow
+  vim.keymap.set("n", "<leader>db", function()
+    local win = vim.api.nvim_get_current_win() 
+    local buf = vim.api.nvim_get_current_buf()
+    remove_buffer(win, buf)
+  end, { silent = true})
+end
+
+function M.setup()
+  M.windows = {}
   vim.opt.showtabline = 0
+  vim.api.nvim_set_hl(0, "ActiveBuf", color_mod.colors.active)
+  local augroup = vim.api.nvim_create_augroup("WinBarUserAuGroup", { clear = true })
+  setup_autocmds(augroup)
+  setup_keymaps()
 end
 
 M.setup()
