@@ -1,6 +1,7 @@
 require("config.dir")
 require("config.keymaps")
 require("config.winbar")
+require("config.statusline")
 
 local o = vim.o
 

@@ -149,6 +149,7 @@ local function setup_keymaps()
 	end, { silent = true, desc = "Remove all buffers and clear all winbars" })
 end
 
+-- TODO: bug where on reload not all buffers are loaded in
 function C.setup()
 	C.windows = {}
 	vim.opt.showtabline = 0
