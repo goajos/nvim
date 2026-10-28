@@ -83,16 +83,17 @@ local function remove_buffer(win, active_buf)
 end
 
 function _G.winbar_content()
-	local win = vim.g.statusline_winid or vim.api.nvim_get_current_win()
+	local win = vim.g.statusline_winid
 	if not C.windows[win] or not C.windows[win].buffer_content then
 		return ""
 	end
+	local is_active = win == vim.api.nvim_get_current_win()
 
 	local result = {}
 	table.insert(result, table.concat({ win, ":" }))
 	for _i, buf in ipairs(C.windows[win].buffer_list) do
 		local content = C.windows[win].buffer_content[buf]
-		if vim.api.nvim_get_current_buf() == buf and vim.api.nvim_get_current_win() == win then
+		if is_active and vim.api.nvim_get_current_buf() == buf then
 			table.insert(result, table.concat({ "%#ActiveBuf#", content, "%*" }))
 		else
 			table.insert(result, content)

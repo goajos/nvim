@@ -81,11 +81,10 @@ local function get_git_diff(name)
 end
 
 function _G.statusline_content()
-	local statusline = "    " -- tab to start
-
 	local win = vim.g.statusline_winid
 	local is_active = win == vim.api.nvim_get_current_win()
 
+	local statusline = "    " -- tab to start
 	if is_active then -- only show git branch for active window
 		local branch = get_git_branch()
 		if branch ~= "" then
