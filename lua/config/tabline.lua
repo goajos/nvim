@@ -57,10 +57,10 @@ end
 
 function _G.tabline_content()
 	if not C.tabline or not C.tabline.buffer_content then
-		return ""
+		return "    "
 	end
 
-	local result = {}
+	local result = { "    " }
 	for _i, buf in ipairs(C.tabline.buffer_list) do
 		local content = C.tabline.buffer_content[buf]
 		if vim.api.nvim_get_current_buf() == buf then
@@ -71,7 +71,7 @@ function _G.tabline_content()
 	end
 
 	if #result == 0 then
-		return ""
+		return "    "
 	end
 
 	return table.concat(result, " ")

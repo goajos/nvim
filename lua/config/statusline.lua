@@ -45,67 +45,56 @@ local function get_diagnostics(buf)
 	return diagnostics_string
 end
 
-local branch_timeout = 10000 -- check every x seconds
-local cached_branch = ""
-local last_branch_get = 0
-local function get_git_branch()
-	local now = vim.loop.now()
-	if now - last_branch_get > branch_timeout then
-		cached_branch = vim.fn.system("git branch --show-current 2>/dev/null | tr -d '\n'")
-		last_branch_get = now
-	end
-	if cached_branch ~= "" then
-		return cached_branch
-	end
-	return ""
-end
-
-local diff_cache = {}
 local function get_git_diff(name)
 	if name == "" then
 		return ""
 	end
-	if diff_cache[name] == nil then
-		local raw = vim.fn.system(
-			"git diff --numstat "
-				.. vim.fn.shellescape(name)
-				.. ' 2>/dev/null | awk \'{print $1"+" " " $2"-"}\' | tr -d \'\n\''
-		)
-		if raw ~= "" then
-			diff_cache[name] = raw:gsub("(%d+)%+", "%1%%#Success#+%%*"):gsub("(%d+)%-", "%1%%#Error#-%%*")
-		else
-			diff_cache[name] = ""
-		end
+
+	local raw = vim.fn.system(
+		"git diff --numstat "
+			.. vim.fn.shellescape(name)
+			.. ' 2>/dev/null | awk \'{print $1"+" " " $2"-"}\' | tr -d \'\n\''
+	)
+	if raw == "" then
+		return ""
 	end
-	return diff_cache[name]
+
+	return raw:gsub("(%d+)%+", "%1%%#Success#+%%*"):gsub("(%d+)%-", "%1%%#Error#-%%*")
 end
 
 function _G.statusline_content()
 	local win = vim.g.statusline_winid
 	local is_active = win == vim.api.nvim_get_current_win()
 
+	local buf = vim.api.nvim_win_get_buf(win)
+	local readonly = vim.bo[buf].readonly and "[" .. "%#Warning#" .. "READONLY" .. "%*" .. "]" or ""
+	local modified = vim.bo[buf].modified and "[" .. "%#Warning#" .. "+" .. "%*" .. "]" or ""
+	local name = vim.api.nvim_buf_get_name(buf)
+
 	local statusline = "    " -- tab to start
-	if is_active then -- only show git branch for active window
-		local branch = get_git_branch()
-		if branch ~= "" then
-			statusline = statusline .. "(" .. branch .. ")" .. " "
+	if is_active and readonly == "" then -- only show git branch for active window and not readonly buffers
+		local icon = icon_mod.get_icon_by_filetype("git")
+		if C.git_branch ~= "" then
+			statusline = statusline .. "(" .. icon .. " " .. C.git_branch .. ")" .. " "
 		else
-			statusline = statusline .. "(nil)" .. " "
+			statusline = statusline .. "(" .. icon .. ")" .. " "
 		end
 	end
 
-	-- file name
-	local buf = vim.api.nvim_win_get_buf(win)
-	local name = vim.api.nvim_buf_get_name(buf)
+	-- file name with readonly and modified flags
 	local fname = (name ~= "") and vim.fn.fnamemodify(name, ":.") or ""
 	if fname ~= "" then
-		statusline = statusline .. fname .. " "
+		statusline = statusline .. readonly .. " " .. fname .. " " .. modified .. " "
 	end
 
-	if is_active and vim.bo[buf].filetype ~= "directory" then -- only show git diff for active window
-		local diff = get_git_diff(name)
-		if diff ~= "" then
-			statusline = statusline .. diff .. " "
+	-- only show git diff for active window that is not a directory
+	if is_active and vim.bo[buf].filetype ~= "directory" then
+		if not C.git_diff[buf] then
+			C.git_diff[buf] = get_git_diff(name)
+		end
+
+		if C.git_diff[buf] ~= "" then
+			statusline = statusline .. C.git_diff[buf] .. " "
 		end
 	end
 
@@ -130,7 +119,39 @@ function _G.statusline_content()
 	return statusline
 end
 
-local function setup_autocmds(augroup) end
+local function get_git_branch()
+	local git_branch = vim.fn.system("git branch --show-current 2>/dev/null | tr -d '\n'")
+	if git_branch == "" then
+		return ""
+	end
+
+	return git_branch
+end
+
+local function setup_autocmds(augroup)
+	vim.api.nvim_create_autocmd({ "VimEnter", "DirChanged" }, {
+		group = augroup,
+		callback = function(args)
+			C.git_branch = get_git_branch()
+		end,
+	})
+	vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+		group = augroup,
+		callback = function(args)
+			local buf = args.buf
+			local name = vim.api.nvim_buf_get_name(buf)
+			C.git_diff[buf] = get_git_diff(name)
+		end,
+	})
+	vim.api.nvim_create_autocmd({ "BufDelete" }, {
+		group = augroup,
+		callback = function(args)
+			local buf = args.buf
+			local name = vim.api.nvim_buf_get_name(buf)
+			C.git_diff[buf] = nil
+		end,
+	})
+end
 
 local function setup_keymaps() end
 
@@ -138,12 +159,14 @@ function C.setup()
 	vim.api.nvim_set_hl(0, "StatusLine", color_mod.colors.active)
 	vim.api.nvim_set_hl(0, "Error", color_mod.colors.error)
 	vim.api.nvim_set_hl(0, "Success", color_mod.colors.success)
-	vim.api.nvim_set_hl(0, "Warning", color_mod.colors.success)
+	vim.api.nvim_set_hl(0, "Warning", color_mod.colors.warning)
 	local augroup = vim.api.nvim_create_augroup("StatusLineUserAuGroup", { clear = true })
 	setup_autocmds(augroup)
 	setup_keymaps()
+	C.git_diff = {}
 	vim.o.statusline = "%!v:lua.statusline_content()"
 end
 
 C.setup()
+
 return C

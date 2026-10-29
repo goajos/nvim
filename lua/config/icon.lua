@@ -2,26 +2,18 @@ local M = {}
 
 local ok, devicons = pcall(require, "nvim-web-devicons")
 if not ok then
-  vim.notify("M.icon: couldn't load nvim-web-devicons",vim.log.levels.INFO)
-  return
+	vim.notify("M.icon: couldn't load nvim-web-devicons", vim.log.levels.INFO)
+	return
 end
 
-local icons = {
-  help = devicons.get_icon_by_filetype("markdown")
-}
-
-local function get_default_icon(buf)
-  local btype = vim.bo[buf].buftype
-  if icons[btype] then
-    return icons[btype]
-  end
-  return devicons.get_icon_by_filetype("vim")
+function M.get_icon_by_filetype(type)
+	return devicons.get_icon_by_filetype(type)
 end
 
 function M.get_icon(buf, name)
-  if not name or name == "" then
-    return get_default_icon(buf)
-  end
+	if not name or name == "" then
+		return devicons.get_icon_by_filetype(vim.bo[buf].filetype)
+	end
 	-- :t Tail (last path component only)
 	local fname = vim.fn.fnamemodify(name, ":t")
 	-- :e Extension only
