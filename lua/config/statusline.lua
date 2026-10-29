@@ -102,7 +102,7 @@ function _G.statusline_content()
 		statusline = statusline .. fname .. " "
 	end
 
-	if is_active then -- only show git diff for active window
+	if is_active and vim.bo[buf].filetype ~= "directory" then -- only show git diff for active window
 		local diff = get_git_diff(name)
 		if diff ~= "" then
 			statusline = statusline .. diff .. " "
