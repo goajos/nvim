@@ -1,6 +1,7 @@
+require("config.commandline")
 require("config.dir")
+require("config.grep")
 require("config.keymaps")
--- require("config.winbar")
 require("config.statusline")
 require("config.tabline")
 
@@ -38,9 +39,6 @@ o.smartcase = true -- no ignore case
 -- vim.opt :append helper
 vim.opt.guicursor = "n-v-c-sm:block" -- default cursor
 vim.opt.guicursor:append("i-ci-t:block-blinkwait0-blinkon500-blinkoff250-TermCursor")
-
--- default value
--- o.grpeprg = "rg --vimpgrep -uu"
 
 -- TODO: pum settings?
 

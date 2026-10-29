@@ -2,13 +2,13 @@ local C = {}
 
 local ok, icon_mod = pcall(require, "config.icon")
 if not ok then
-	vim.notify("C.winbar: couldn't load C.icon", vim.log.levels.INFO)
+	vim.notify("C.statusline: couldn't load C.icon", vim.log.levels.INFO)
 	return
 end
 
 local ok, color_mod = pcall(require, "config.color")
 if not ok then
-	vim.notify("C.winbar: couldn't load C.color", vim.log.levels.INFO)
+	vim.notify("C.statusline: couldn't load C.color", vim.log.levels.INFO)
 	return
 end
 

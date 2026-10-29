@@ -108,10 +108,10 @@ local function setup_keymaps()
 	end, { silent = true, desc = "Remove all buffers and update the tabline" })
 	vim.keymap.set("n", "<leader>b", function()
 		local cnt = vim.v.count > 0 and vim.v.count or vim.fn.bufnr("#")
-		if vim.api.nvim_buf_is_valid(cnt) then
+		if vim.api.nvim_buf_is_valid(cnt) and vim.bo[cnt].buflisted then
 			return "<cmd>" .. cnt .. "b<cr>"
 		end
-		vim.notify("C.statusline: invalid buffer " .. target_buf .. " for switching", vim.log.levels.INFO)
+		vim.notify("C.statusline: invalid buffer " .. cnt .. " for switching", vim.log.levels.INFO)
 	end, { expr = true, silent = true, desc = "Switch to # or previous buffer if valid" })
 end
 

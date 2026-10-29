@@ -29,7 +29,8 @@ km("n", "<leader>f", ":find ", { desc = "Open command line with find" })
 km("n", "<leader>F", function()
 	return ":find " .. vim.fn.expand("%:h") .. "/"
 end, { expr = true, desc = "Open command line with find at current head dir" })
-km("n", "<leader>g", ":grep ", { desc = "Open command line with grep" })
+
+km("n", "<leader>tm", "<cmd>messages<cr>", vim.tbl_extend("force", opts, { desc = "Toggle the messages" }))
 
 km({ "n", "x" }, "gy", '"+y', vim.tbl_extend("force", opts, { desc = "Yank to system clipboard" }))
 km({ "n", "x" }, "gp", '"+p', vim.tbl_extend("force", opts, { desc = "Paste after from system clipboard" }))
