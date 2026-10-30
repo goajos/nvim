@@ -34,7 +34,3 @@ km({ "n", "x" }, "gy", '"+y', vim.tbl_extend("force", opts, { desc = "Yank to sy
 km({ "n", "x" }, "gp", '"+p', vim.tbl_extend("force", opts, { desc = "Paste after from system clipboard" }))
 km({ "n", "x" }, "gP", '"+P', vim.tbl_extend("force", opts, { desc = "Paste before from system clipboard" }))
 km({ "x" }, "p", '"_dP', vim.tbl_extend("force", opts, { desc = "Paste without yanking selection" }))
-
--- TODO: move these to terminal module?
-km("t", "<esc>", "<c-\\><c-n>", vim.tbl_extend("force", opts, { desc = "Hide terminal buffer" }))
-km("t", "<c-\\><c-n>", "<esc>", vim.tbl_extend("force", opts, { desc = "Send <esc> to terminal" }))

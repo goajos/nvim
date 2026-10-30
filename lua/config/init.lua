@@ -5,6 +5,7 @@ require("config.keymaps")
 require("config.pager")
 require("config.statusline")
 require("config.tabline")
+require("config.terminal")
 
 local o = vim.o
 
