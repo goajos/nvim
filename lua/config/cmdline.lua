@@ -13,6 +13,7 @@ local function render_cmdline_win(win)
 	local col = math.floor((vim.o.columns - width) / 2)
 	vim.api.nvim_win_set_config(win, {
 		relative = "editor",
+		height = height,
 		width = width,
 		row = row,
 		col = col,

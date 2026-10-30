@@ -40,15 +40,14 @@ end
 local function setup_autocmds(augroup) end
 
 local function setup_keymaps()
-	-- TODO: move these to terminal module?
-	vim.keymap.set("t", "<esc>", "<c-\\><c-n>", { silent = true, desc = "Hide terminal buffer" })
+	vim.keymap.set("t", "<esc>", "<c-\\><c-n>", { silent = true, desc = "HideTerminalal buffer" })
 	vim.keymap.set("t", "<c-\\><c-n>", "<esc>", { silent = true, desc = "Send <esc> to terminal" })
 	vim.keymap.set("n", "<leader>tt", toggle_terminal, { silent = true, desc = "Toggle terminal" })
 end
 
 function C.setup()
-	C.state = { buf = nil, win, is_open = false }
-	local augroup = vim.api.nvim_create_augroup("CmdLineUserAuGroup", { clear = true })
+	C.state = { buf = nil, win = nil, is_open = false }
+	local augroup = vim.api.nvim_create_augroup("TerminalUserAuGroup", { clear = true })
 	setup_autocmds(augroup)
 	setup_keymaps()
 end

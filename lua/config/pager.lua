@@ -1,11 +1,5 @@
 local C = {}
 
-local ok, ui2_mod = pcall(require, "vim._core.ui2")
-if not ok then
-	vim.notify("C.pager: couldn't load vim._core.ui2", vim.log.levels.INFO)
-	return
-end
-
 local function setup_autocmds(augroup)
 	vim.api.nvim_create_autocmd("FileType", {
 		group = augroup,
@@ -26,7 +20,6 @@ end
 
 function C.setup()
 	C.state = { config = nil }
-	ui2_mod.enable({})
 	local augroup = vim.api.nvim_create_augroup("PagerUserAuGroup", { clear = true })
 	setup_autocmds(augroup)
 	setup_keymaps()
