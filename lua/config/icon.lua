@@ -1,16 +1,16 @@
-local M = {}
+local C = {}
 
 local ok, devicons = pcall(require, "nvim-web-devicons")
 if not ok then
-	vim.notify("M.icon: couldn't load nvim-web-devicons", vim.log.levels.INFO)
+	vim.notify("C.icon: couldn't load nvim-web-devicons", vim.log.levels.INFO)
 	return
 end
 
-function M.get_icon_by_filetype(type)
+function C.get_icon_by_filetype(type)
 	return devicons.get_icon_by_filetype(type)
 end
 
-function M.get_icon(buf, name)
+function C.get_icon(buf, name)
 	if not name or name == "" then
 		return devicons.get_icon_by_filetype(vim.bo[buf].filetype)
 	end
@@ -22,4 +22,4 @@ function M.get_icon(buf, name)
 	return icon
 end
 
-return M
+return C

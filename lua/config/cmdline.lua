@@ -30,8 +30,6 @@ local function setup_autocmds(augroup)
 			local cmdtype = vim.fn.getcmdtype()
 			if cmdtype == ":" or cmdtype == "/" or cmdtype == "?" then
 				render_cmdline_win(cmdline_win)
-			else
-				ui2_mod.cmdline.cmdline_show()
 			end
 		end,
 	})
