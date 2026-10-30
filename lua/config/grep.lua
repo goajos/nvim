@@ -1,11 +1,5 @@
 local C = {}
 
--- local ok, icon_mod = pcall(require, "vim._core.ui2")
--- if not ok then
--- 	vim.notify("C.grep: couldn't load vim._core.ui2", vim.log.levels.INFO)
--- 	return
--- end
-
 local function setup_autocmds(augroup)
 	vim.api.nvim_create_autocmd("QuickFixCmdPost", {
 		group = augroup,

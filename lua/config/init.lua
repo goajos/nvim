@@ -1,7 +1,8 @@
-require("config.commandline")
+require("config.cmdline")
 require("config.dir")
 require("config.grep")
 require("config.keymaps")
+require("config.pager")
 require("config.statusline")
 require("config.tabline")
 
@@ -35,6 +36,8 @@ o.signcolumn = "number" -- when and how to display the sign column
 o.list = true -- show <tab>, <eol>, ...
 
 o.smartcase = true -- no ignore case
+
+o.winborder = "rounded"
 
 -- vim.opt :append helper
 vim.opt.guicursor = "n-v-c-sm:block" -- default cursor
