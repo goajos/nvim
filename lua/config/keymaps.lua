@@ -21,7 +21,7 @@ km("n", "<leader>E", function()
 end, vim.tbl_extend("force", opts, { desc = "Open current head dir in current buffer" }))
 
 -- local buf = require("config.buf")
-km("n", "<leader><esc>", "<cmd>quitall<cr>", vim.tbl_extend("force", opts, { desc = "Quitall neovim" }))
+-- km("n", "<leader><esc>", "<cmd>quitall<cr>", vim.tbl_extend("force", opts, { desc = "Quitall neovim" }))
 km("n", "<leader>r", "<cmd>restart<cr>", vim.tbl_extend("force", opts, { desc = "Restart neovim" }))
 km("n", "<leader>w", "<cmd>write<cr>", vim.tbl_extend("force", opts, { desc = "Write current buffer to file" }))
 km("n", "<leader>/", "<cmd>nohlsearch<cr>", vim.tbl_extend("force", opts, { desc = "Clear search highlight" }))

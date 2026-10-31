@@ -22,7 +22,7 @@ o.autoread = true -- auto read file when changed from the outside
 o.undofile = true -- save undo information in a file
 local undodir = "/tmp/nvim/undo/"
 if vim.fn.isdirectory(undodir) == 0 then
-	vim.fn.mkdir("undodir", "p")
+	vim.fn.mkdir(undodir, "p")
 end
 o.undodir = undodir
 

@@ -1,12 +1,20 @@
 local C = {}
 
+local function is_qf_open()
+	for _i, win in ipairs(vim.fn.getwininfo()) do
+		if win.quickfix == 1 then
+			return true
+		end
+	end
+	return false
+end
+
 local function toggle_quickfix()
-	if C.is_open then
+	if is_qf_open() then
 		vim.cmd("cclose")
 	else
 		vim.cmd("copen")
 	end
-	C.is_open = not C.is_open
 end
 
 local function setup_autocmds(augroup)
@@ -16,7 +24,6 @@ local function setup_autocmds(augroup)
 			local qf = vim.fn.getqflist({ size = 0 })
 			if qf.size > 0 then
 				vim.cmd("copen")
-				C.is_open = true
 			else
 				-- schedule to not silence the notify
 				vim.schedule(function()
@@ -31,10 +38,9 @@ local function setup_keymaps()
 	vim.keymap.set("n", "<leader>g", ":silent grep! ", { desc = "Open command line with silent grep" })
 	vim.keymap.set("n", "<leader>tc", toggle_quickfix, { desc = "Toggle the quickfix list" })
 	vim.keymap.set("n", "<leader>dc", function()
-		if C.is_open then
+		if is_qf_open() then
 			vim.fn.setqflist({})
 			vim.cmd("cclose")
-			C.is_open = false
 		else
 			vim.notify("C.grep: no open quickfix list", vim.log.levels.INFO)
 		end
@@ -49,7 +55,6 @@ function C.setup()
 	vim.opt.grepprg = "rg --vimgrep -u"
 	-- vim.opt.grepformat = "%f:%l:%c:%m" -- default
 	local augroup = vim.api.nvim_create_augroup("GrepUserAuGroup", { clear = true })
-	C.is_open = false
 	setup_autocmds(augroup)
 	setup_keymaps()
 end

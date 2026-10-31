@@ -15,6 +15,8 @@ local function toggle_help()
 
 	if C.state.buf then
 		C.state.win = render_mod.render_floating_win(C.state.win, C.state.buf, nil, 100)
+		vim.opt_local.relativenumber = false
+		vim.opt_local.number = false
 	else
 		vim.notify("C.help: no open help buffer", vim.log.levels.INFO)
 	end
@@ -24,13 +26,12 @@ end
 
 local function setup_autocmds(augroup)
 	vim.api.nvim_create_autocmd("FileType", {
-		pattern = "help",
+		group = augroup,
+		pattern = { "help", "checkhealth" },
 		callback = function(args)
 			vim.api.nvim_win_close(args.win, true)
 			if C.state.buf ~= args.buf then
 				C.state.buf = args.buf
-				vim.opt_local.relativenumber = false
-				vim.opt_local.number = false
 				toggle_help()
 			end
 		end,
