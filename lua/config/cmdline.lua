@@ -6,19 +6,10 @@ if not ok then
 	return
 end
 
-local function render_cmdline_win(win)
-	local width = math.floor(vim.o.columns * 0.4)
-	local height = math.floor(vim.o.lines * 0.2)
-	local row = math.floor((vim.o.lines - height) / 2)
-	local col = math.floor((vim.o.columns - width) / 2)
-	vim.api.nvim_win_set_config(win, {
-		relative = "editor",
-		height = height,
-		width = width,
-		row = row,
-		col = col,
-		border = vim.o.winborder,
-	})
+local ok, render_mod = pcall(require, "config.render")
+if not ok then
+	vim.notify("C.cmdline: couldn't load C.render", vim.log.levels.INFO)
+	return
 end
 
 local function setup_autocmds(augroup)
@@ -30,7 +21,7 @@ local function setup_autocmds(augroup)
 			C.state.config = vim.api.nvim_win_get_config(cmdline_win)
 			local cmdtype = vim.fn.getcmdtype()
 			if cmdtype == ":" or cmdtype == "/" or cmdtype == "?" then
-				render_cmdline_win(cmdline_win)
+				render_mod.render_cmdline_win(cmdline_win)
 			end
 		end,
 	})
