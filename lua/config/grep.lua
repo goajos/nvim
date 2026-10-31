@@ -1,5 +1,14 @@
 local C = {}
 
+local function toggle_quickfix()
+	if C.is_open then
+		vim.cmd("cclose")
+	else
+		vim.cmd("copen")
+	end
+	C.is_open = not C.is_open
+end
+
 local function setup_autocmds(augroup)
 	vim.api.nvim_create_autocmd("QuickFixCmdPost", {
 		group = augroup,
@@ -17,8 +26,10 @@ local function setup_autocmds(augroup)
 		end,
 	})
 end
+
 local function setup_keymaps()
 	vim.keymap.set("n", "<leader>g", ":silent grep! ", { desc = "Open command line with silent grep" })
+	vim.keymap.set("n", "<leader>tc", toggle_quickfix, { desc = "Toggle the quickfix list" })
 	vim.keymap.set("n", "<leader>dc", function()
 		if C.is_open then
 			vim.fn.setqflist({})
@@ -27,7 +38,7 @@ local function setup_keymaps()
 		else
 			vim.notify("C.grep: no open quickfix list", vim.log.levels.INFO)
 		end
-	end, { silent = true, desc = "Clear and close the quickfix list if it's open" })
+	end, { silent = true, desc = "Clear and close the quickfix list" })
 end
 
 function C.setup()

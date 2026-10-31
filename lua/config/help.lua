@@ -15,6 +15,8 @@ local function toggle_help()
 
 	if C.state.buf then
 		C.state.win = render_mod.render_floating_win(C.state.win, C.state.buf, nil, 100)
+	else
+		vim.notify("C.help: no open help buffer", vim.log.levels.INFO)
 	end
 
 	C.state.is_open = true
