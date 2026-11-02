@@ -1,3 +1,6 @@
 require("plugins.conform")
+require("plugins.nvim-dap")
+require("plugins.nvim-treesitter")
 require("plugins.nvim-web-devicons")
+require("plugins.osv")
 require("plugins.which-key")
