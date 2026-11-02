@@ -37,6 +37,9 @@ end
 local function setup_keymaps()
 	-- not silent so command line is interactable
 	vim.keymap.set("n", "<leader>g", ":silent grep! ", { desc = "Open command line with silent grep" })
+	vim.keymap.set("n", "<leader>G", function()
+		vim.fn.feedkeys((":silent grep! %s"):format(vim.fn.expand("<cword>")), "n")
+	end, { silent = true, desc = "Open the cmdline with silent grep and insert wordt under cursor" })
 	vim.keymap.set("n", "<leader>tq", toggle_quickfix, { silent = true, desc = "Toggle the quickfix list" })
 	vim.keymap.set("n", "<leader>dq", function()
 		if is_qf_open() then

@@ -40,7 +40,10 @@ end
 
 local function setup_keymaps()
 	-- not silent so command line is interactable
-	vim.keymap.set("n", "<leader>h", ":help ", { desc = "Toggle help" })
+	vim.keymap.set("n", "<leader>h", ":help ", { desc = "Open the cmdline with help" })
+	vim.keymap.set("n", "<leader>H", function()
+		vim.fn.feedkeys((":help %s"):format(vim.fn.expand("<cword>")), "n")
+	end, { silent = true, desc = "Open the cmdline with help and insert wordt under cursor" })
 	vim.keymap.set("n", "<leader>th", toggle_help, { silent = true, desc = "Toggle help" })
 end
 

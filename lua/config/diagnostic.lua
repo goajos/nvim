@@ -23,6 +23,15 @@ local function setup_autocmds(augroup)
 end
 
 local function setup_keymaps()
+	vim.keymap.set("n", "<leader>td", function()
+		C.is_enabled = not C.is_enabled
+		vim.diagnostic.enable(C.is_enabled)
+		if C.is_enabled then
+			vim.notify("C.diagnostic: enabled diagnostics for current buffer ", vim.log.levels.INFO)
+		else
+			vim.notify("C.diagnostic: disabled diagnostics for current buffer ", vim.log.levels.INFO)
+		end
+	end, { silent = true, desc = "Toggle buffer diagnostics" })
 	vim.keymap.set("n", "<leader>qd", function()
 		-- 0 for current buffer
 		local diagnostics = vim.diagnostic.get(0)
