@@ -26,7 +26,13 @@ km("n", "<leader>r", "<cmd>restart<cr>", vim.tbl_extend("force", opts, { desc = 
 km("n", "<leader>w", "<cmd>write<cr>", vim.tbl_extend("force", opts, { desc = "Write current buffer to file" }))
 km("n", "<leader>/", "<cmd>nohlsearch<cr>", vim.tbl_extend("force", opts, { desc = "Clear search highlight" }))
 -- not silent so command line is interactable
-km("n", "<leader>f", ":find ", { desc = "Open command line with find" })
+km("n", "<leader>f", function()
+	vim.fn.feedkeys(":", "n")
+	-- schedule to ensure the cmdline is rendered before the wildmenu is triggered
+	vim.schedule(function()
+		vim.fn.feedkeys("find ", "n")
+	end)
+end, { desc = "Open command line with find" })
 km("n", "<leader>F", function()
 	return ":find " .. vim.fn.expand("%:h") .. "/"
 end, { expr = true, desc = "Open command line with find at current head dir" })

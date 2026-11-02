@@ -43,10 +43,8 @@ o.smartcase = true -- no ignore case
 
 o.winborder = "rounded"
 
+o.wildmode = "noselect:lastused" -- no preselect and sort buffers by last used
+
 -- vim.opt :append helper
 vim.opt.guicursor = "n-v-c-sm:block" -- default cursor
 vim.opt.guicursor:append("i-ci-t:block-blinkwait0-blinkon500-blinkoff250-TermCursor")
-
--- TODO: pum settings?
-
--- TODO: fold settings?
