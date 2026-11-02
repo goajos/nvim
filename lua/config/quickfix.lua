@@ -20,7 +20,7 @@ end
 local function setup_autocmds(augroup)
 	vim.api.nvim_create_autocmd("QuickFixCmdPost", {
 		group = augroup,
-		callback = function(args)
+		callback = function()
 			local qf = vim.fn.getqflist({ size = 0 })
 			if qf.size > 0 then
 				vim.cmd("copen")
@@ -35,9 +35,10 @@ local function setup_autocmds(augroup)
 end
 
 local function setup_keymaps()
+	-- not silent so command line is interactable
 	vim.keymap.set("n", "<leader>g", ":silent grep! ", { desc = "Open command line with silent grep" })
-	vim.keymap.set("n", "<leader>tc", toggle_quickfix, { desc = "Toggle the quickfix list" })
-	vim.keymap.set("n", "<leader>dc", function()
+	vim.keymap.set("n", "<leader>tq", toggle_quickfix, { silent = true, desc = "Toggle the quickfix list" })
+	vim.keymap.set("n", "<leader>dq", function()
 		if is_qf_open() then
 			vim.fn.setqflist({})
 			vim.cmd("cclose")
@@ -54,7 +55,7 @@ function C.setup()
 	-- vim.opt.grepprg = "rg --vimgrep -uu" -- default
 	vim.opt.grepprg = "rg --vimgrep -u"
 	-- vim.opt.grepformat = "%f:%l:%c:%m" -- default
-	local augroup = vim.api.nvim_create_augroup("GrepUserAuGroup", { clear = true })
+	local augroup = vim.api.nvim_create_augroup("QuickFixUserAuGroup", { clear = true })
 	setup_autocmds(augroup)
 	setup_keymaps()
 end

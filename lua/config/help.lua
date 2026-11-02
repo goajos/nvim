@@ -14,7 +14,7 @@ local function toggle_help()
 	end
 
 	if C.state.buf then
-		C.state.win = render_mod.render_floating_win(C.state.win, C.state.buf, nil, 100)
+		C.state.win = render_mod.render_floating_win(C.state.buf, nil, 100)
 		vim.opt_local.relativenumber = false
 		vim.opt_local.number = false
 	else
@@ -39,6 +39,8 @@ local function setup_autocmds(augroup)
 end
 
 local function setup_keymaps()
+	-- not silent so command line is interactable
+	vim.keymap.set("n", "<leader>h", ":help ", { desc = "Toggle help" })
 	vim.keymap.set("n", "<leader>th", toggle_help, { silent = true, desc = "Toggle help" })
 end
 

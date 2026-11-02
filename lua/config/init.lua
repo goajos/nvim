@@ -1,10 +1,11 @@
 require("config.cmdline")
+require("config.diagnostic")
 require("config.dir")
-require("config.grep")
 require("config.help")
 require("config.keymaps")
 require("config.lsp")
 require("config.pager")
+require("config.quickfix")
 require("config.statusline")
 require("config.tabline")
 require("config.terminal")
@@ -35,7 +36,7 @@ o.breakindent = true -- wrapped line repeats indent
 o.cursorline = true -- highlight screen line of the cursor
 o.number = true -- print line number in front of each line
 o.relativenumber = true -- relative line numbers
-o.signcolumn = "number" -- when and how to display the sign column
+o.signcolumn = "yes" -- when and how to display the sign column
 o.list = true -- show <tab>, <eol>, ...
 
 o.smartcase = true -- no ignore case

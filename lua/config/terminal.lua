@@ -16,10 +16,10 @@ local function toggle_terminal()
 	if not C.state.buf then
 		C.state.buf = vim.api.nvim_create_buf(false, true)
 		vim.bo[C.state.buf].bufhidden = "hide"
-		C.state.win = render_mod.render_floating_win(C.state.win, C.state.buf, nil, nil)
+		C.state.win = render_mod.render_floating_win(C.state.buf, nil, nil)
 		vim.fn.jobstart("bash", { term = true })
 	else
-		C.state.win = render_mod.render_floating_win(C.state.win, C.state.buf, nil, nil)
+		C.state.win = render_mod.render_floating_win(C.state.buf, nil, nil)
 	end
 
 	C.state.is_open = true

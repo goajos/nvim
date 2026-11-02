@@ -12,7 +12,7 @@ if not ok then
 	return
 end
 
-local function get_content(buf, name, icon, btype)
+local function get_content(buf, name, icon)
 	local trim = vim.trim(name)
 	if trim == "" then
 		return ""
@@ -25,8 +25,7 @@ local function update_tabline(buf, event)
 	if event == "BufAdd" and not C.tabline.buffer_content[buf] then
 		local name = vim.api.nvim_buf_get_name(buf)
 		local icon = icon_mod.get_icon(buf, name)
-		local btype = vim.bo[buf].buftype
-		local content = get_content(buf, name, icon, btype)
+		local content = get_content(buf, name, icon)
 		-- empty buffer is invalid?
 		if content == "" then
 			return

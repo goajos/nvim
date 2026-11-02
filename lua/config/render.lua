@@ -15,7 +15,7 @@ function C.render_cmdline_win(win)
 	})
 end
 
-function C.render_floating_win(win, buf, max_height, max_width)
+function C.render_floating_win(buf, max_height, max_width)
 	local height = math.floor(vim.o.lines * 0.8)
 	if max_height then
 		height = math.min(height, max_height)

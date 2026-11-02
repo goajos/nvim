@@ -2,9 +2,6 @@ local C = {}
 
 C.colors = {
 	active = { bold = true, bg = "#285577", fg = "#ffffff" },
-	error = { fg = "#ff0000" },
-	success = { fg = "#00ff00" },
-	warning = { fg = "#ffff00" },
 	numberlinenr = { fg = "NvimLightGrey4" },
 	cursorlinenr = { bold = true, fg = "#ffffff" },
 

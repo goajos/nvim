@@ -6,43 +6,11 @@ if not ok then
 	return
 end
 
-local ok, color_mod = pcall(require, "config.color")
+local color_mod
+ok, color_mod = pcall(require, "config.color")
 if not ok then
 	vim.notify("C.statusline: couldn't load C.color", vim.log.levels.INFO)
 	return
-end
-
-local function get_diagnostics(buf)
-	if not vim.diagnostic then
-		return ""
-	end
-	local diagnostics = vim.diagnostic.get(buf)
-	local error, warning, info, hint = 0, 0, 0, 0
-	for _, val in ipairs(diagnostics) do
-		if val.severity == vim.diagnostic.severity.ERROR then
-			error = error + 1
-		elseif val.severity == vim.diagnostic.severity.WARN then
-			warning = warning + 1
-		elseif val.severity == vim.diagnostic.severity.INFO then
-			info = info + 1
-		elseif val.severity == vim.diagnostic.severity.HINT then
-			hint = hint + 1
-		end
-	end
-	local diagnostics_string = ""
-	if error > 0 then
-		diagnostics_string = diagnostics_string .. "ERROR:" .. "%#Error#" .. error .. "%*" .. " "
-	end
-	if warning > 0 then
-		diagnostics_string = diagnostics_string .. "WARN:" .. "%#Warning#" .. warning .. "%*" .. " "
-	end
-	if info > 0 then
-		diagnostics_string = diagnostics_string .. "INFO:" .. info .. " "
-	end
-	if hint > 0 then
-		diagnostics_string = diagnostics_string .. "HINT:" .. hint .. " "
-	end
-	return diagnostics_string
 end
 
 local function get_git_diff(name)
@@ -59,7 +27,7 @@ local function get_git_diff(name)
 		return ""
 	end
 
-	return raw:gsub("(%d+)%+", "%1%%#Success#+%%*"):gsub("(%d+)%-", "%1%%#Error#-%%*")
+	return raw:gsub("(%d+)%+", "%1%%#String#+%%*"):gsub("(%d+)%-", "%1%%#DiagnosticError#-%%*")
 end
 
 function _G.statusline_content()
@@ -67,8 +35,8 @@ function _G.statusline_content()
 	local is_active = win == vim.api.nvim_get_current_win()
 
 	local buf = vim.api.nvim_win_get_buf(win)
-	local readonly = vim.bo[buf].readonly and "[" .. "%#Warning#" .. "READONLY" .. "%*" .. "]" or ""
-	local modified = vim.bo[buf].modified and "[" .. "%#Warning#" .. "+" .. "%*" .. "]" or ""
+	local readonly = vim.bo[buf].readonly and "[" .. "%#DiagnosticWarn#" .. "READONLY" .. "%*" .. "]" or ""
+	local modified = vim.bo[buf].modified and "[" .. "%#DiagnosticWarn#" .. "+" .. "%*" .. "]" or ""
 	local name = vim.api.nvim_buf_get_name(buf)
 
 	local statusline = "    " -- tab to start
@@ -101,9 +69,9 @@ function _G.statusline_content()
 	statusline = statusline .. "%=" -- right indent
 
 	if is_active then -- only show diagnostics for active window
-		local diagnostics = get_diagnostics(buf)
-		if diagnostics ~= "" then
-			statusline = statusline .. diagnostics .. " "
+		local diagnostic_status = vim.diagnostic.status()
+		if diagnostic_status ~= "" then
+			statusline = statusline .. diagnostic_status .. " "
 		end
 	end
 
@@ -131,7 +99,7 @@ end
 local function setup_autocmds(augroup)
 	vim.api.nvim_create_autocmd({ "VimEnter", "DirChanged" }, {
 		group = augroup,
-		callback = function(args)
+		callback = function()
 			C.git_branch = get_git_branch()
 		end,
 	})
@@ -147,7 +115,6 @@ local function setup_autocmds(augroup)
 		group = augroup,
 		callback = function(args)
 			local buf = args.buf
-			local name = vim.api.nvim_buf_get_name(buf)
 			C.git_diff[buf] = nil
 		end,
 	})
@@ -157,9 +124,6 @@ local function setup_keymaps() end
 
 function C.setup()
 	vim.api.nvim_set_hl(0, "StatusLine", color_mod.colors.active)
-	vim.api.nvim_set_hl(0, "Error", color_mod.colors.error)
-	vim.api.nvim_set_hl(0, "Success", color_mod.colors.success)
-	vim.api.nvim_set_hl(0, "Warning", color_mod.colors.warning)
 	local augroup = vim.api.nvim_create_augroup("StatusLineUserAuGroup", { clear = true })
 	setup_autocmds(augroup)
 	setup_keymaps()
