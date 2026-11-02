@@ -100,10 +100,10 @@ local function setup_autocmds(augroup)
 end
 
 local function setup_keymaps()
-	vim.keymap.set("n", "<leader>db", function()
+	vim.keymap.set("n", "<leader>rb", function()
 		vim.cmd("bd")
 	end, { silent = true, desc = "Remove the current buffer and update the tabline" })
-	vim.keymap.set("n", "<leader>dB", function()
+	vim.keymap.set("n", "<leader>rB", function()
 		vim.cmd("%bd")
 	end, { silent = true, desc = "Remove all buffers and update the tabline" })
 	vim.keymap.set("n", "<leader>b", function()

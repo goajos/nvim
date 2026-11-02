@@ -41,14 +41,14 @@ local function setup_keymaps()
 		vim.fn.feedkeys((":silent grep! %s"):format(vim.fn.expand("<cword>")), "n")
 	end, { silent = true, desc = "Open the cmdline with silent grep and insert wordt under cursor" })
 	vim.keymap.set("n", "<leader>tq", toggle_quickfix, { silent = true, desc = "Toggle the quickfix list" })
-	vim.keymap.set("n", "<leader>dq", function()
+	vim.keymap.set("n", "<leader>rq", function()
 		if is_qf_open() then
 			vim.fn.setqflist({})
 			vim.cmd("cclose")
 		else
 			vim.notify("C.grep: no open quickfix list", vim.log.levels.INFO)
 		end
-	end, { silent = true, desc = "Clear and close the quickfix list" })
+	end, { silent = true, desc = "Remove the quickfix list" })
 end
 
 function C.setup()
