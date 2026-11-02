@@ -6,7 +6,8 @@ if not ok then
 	return
 end
 
-local ok, color_mod = pcall(require, "config.color")
+local color_mod
+ok, color_mod = pcall(require, "config.color")
 if not ok then
 	vim.notify("C.tabline: couldn't load C.color", vim.log.levels.INFO)
 	return

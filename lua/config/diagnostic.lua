@@ -15,21 +15,23 @@ end
 local function setup_autocmds(augroup)
 	vim.api.nvim_create_autocmd({ "InsertEnter", "InsertLeave" }, {
 		group = augroup,
-		callback = function()
-			C.is_enabled = not C.is_enabled
-			vim.diagnostic.enable(C.is_enabled)
+		callback = function(args)
+			local buf = args.buf
+			local toggle = not vim.diagnostic.is_enabled({ bufnr = buf })
+			vim.diagnostic.enable(toggle, { bufnr = args.buf })
 		end,
 	})
 end
 
 local function setup_keymaps()
 	vim.keymap.set("n", "<leader>td", function()
-		C.is_enabled = not C.is_enabled
-		vim.diagnostic.enable(C.is_enabled)
-		if C.is_enabled then
-			vim.notify("C.diagnostic: enabled diagnostics for current buffer ", vim.log.levels.INFO)
+		local buf = vim.api.nvim_get_current_buf()
+		local toggle = not vim.diagnostic.is_enabled({ bufnr = buf })
+		vim.diagnostic.enable(toggle, { bufnr = buf })
+		if toggle then
+			vim.notify("C.diagnostic: enabled diagnostics for current buffer " .. buf, vim.log.levels.INFO)
 		else
-			vim.notify("C.diagnostic: disabled diagnostics for current buffer ", vim.log.levels.INFO)
+			vim.notify("C.diagnostic: disabled diagnostics for current buffer " .. buf, vim.log.levels.INFO)
 		end
 	end, { silent = true, desc = "Toggle buffer diagnostics" })
 	vim.keymap.set("n", "<leader>qd", function()
@@ -75,7 +77,6 @@ function C.setup()
 		},
 		jump = { on_jump = on_jump },
 	})
-	C.is_enabled = true
 	local augroup = vim.api.nvim_create_augroup("DiagnosticsUserAuGroup", { clear = true })
 	setup_autocmds(augroup)
 	setup_keymaps()
