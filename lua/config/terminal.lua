@@ -7,13 +7,13 @@ if not ok then
 end
 
 local function toggle_terminal()
-	if C.state.is_open and C.state.win then
+	if C.state.win and vim.api.nvim_win_is_valid(C.state.win) then
 		vim.api.nvim_win_close(C.state.win, true)
-		C.state.is_open = false
+		C.state.win = nil
 		return
 	end
 
-	if not C.state.buf then
+	if not C.state.buf or not vim.api.nvim_buf_is_valid(C.state.buf) then
 		C.state.buf = vim.api.nvim_create_buf(false, true)
 		vim.bo[C.state.buf].bufhidden = "hide"
 		C.state.win = render_mod.render_floating_win(C.state.buf, nil, nil)
@@ -22,7 +22,6 @@ local function toggle_terminal()
 		C.state.win = render_mod.render_floating_win(C.state.buf, nil, nil)
 	end
 
-	C.state.is_open = true
 	-- vim.cmd("startinsert")
 end
 
@@ -35,7 +34,7 @@ local function setup_keymaps()
 end
 
 function C.setup()
-	C.state = { buf = nil, win = nil, is_open = false }
+	C.state = { buf = nil, win = nil }
 	local augroup = vim.api.nvim_create_augroup("TerminalUserAuGroup", { clear = true })
 	setup_autocmds(augroup)
 	setup_keymaps()

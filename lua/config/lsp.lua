@@ -12,6 +12,8 @@ function C.setup()
 	-- vim.opt.completeopt = { "menu", "menuone", "popup", "noselect", "fuzzy" }
 	vim.opt.completeopt = { "menu", "menuone", "popup", "noselect" }
 
+	-- TODO: enable lsp only for files in the working directory?
+
 	vim.lsp.enable({ "lua_ls", "clangd", "ty" })
 end
 

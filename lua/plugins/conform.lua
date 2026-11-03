@@ -1,26 +1,34 @@
 vim.pack.add({ "https://github.com/stevearc/conform.nvim" })
 local P = {}
 
-local function setup_autocmds()
+local function setup_autocmds(augroup)
+	vim.api.nvim_create_autocmd("BufEnter", {
+		group = augroup,
+		callback = function(args)
+			vim.b[args.buf].disable_autoformat = false
+		end,
+	})
 	vim.api.nvim_create_user_command("FormatDisable", function()
-		vim.b.disable_autoformat = true
-		vim.notify("P.conform: auto format disabled for buffer " .. vim.api.nvim_get_current_buf(), vim.log.levels.INFO)
+		local buf = vim.api.nvim_get_current_buf()
+		vim.b[buf].disable_autoformat = true
+		vim.notify("P.conform: auto format disabled for buffer " .. buf, vim.log.levels.INFO)
 	end)
 
 	vim.api.nvim_create_user_command("FormatEnable", function()
-		vim.b.disable_autoformat = false
-		vim.notify("P.conform: auto format enable for buffer " .. vim.api.nvim_get_current_buf(), vim.log.levels.INFO)
+		local buf = vim.api.nvim_get_current_buf()
+		vim.b[buf].disable_autoformat = false
+		vim.notify("P.conform: auto format enable for buffer " .. buf, vim.log.levels.INFO)
 	end)
 end
 
 local function setup_keymaps()
 	vim.keymap.set("n", "<leader>tf", function()
-		if P.autoformat then
-			vim.cmd("FormatDisable")
-		else
+		local buf = vim.api.nvim_get_current_buf()
+		if vim.b[buf].disable_autoformat then
 			vim.cmd("FormatEnable")
+		else
+			vim.cmd("FormatDisable")
 		end
-		P.autoformat = not P.autoformat
 	end, { silent = true, desc = "Toggle buffer auto formatting" })
 end
 
@@ -43,9 +51,8 @@ function P.setup()
 			return { timeout_ms = 500, lsp_format = "fallback" }
 		end,
 	})
-
-	setup_autocmds()
-	P.autoformat = true
+	local augroup = vim.api.nvim_create_augroup("ConformUserAuGroup", { clear = true })
+	setup_autocmds(augroup)
 	setup_keymaps()
 end
 

@@ -13,91 +13,57 @@ if not ok then
 	return
 end
 
-local function get_content(buf, name, icon)
-	local trim = vim.trim(name)
-	if trim == "" then
-		return ""
-	end
-	local parts = vim.split(name, "/", { plain = true })
-	return buf .. ": " .. icon .. " " .. parts[#parts]
-end
+local excluded_ftypes = {
+	directory = true,
+	cmd = true,
+	dialog = true,
+	msg = true,
+	pager = true,
+}
 
-local function update_tabline(buf, event)
-	if event == "BufAdd" and not C.tabline.buffer_content[buf] then
-		local name = vim.api.nvim_buf_get_name(buf)
-		local icon = icon_mod.get_icon(buf, name)
-		local content = get_content(buf, name, icon)
-		-- empty buffer is invalid?
-		if content == "" then
-			return
-		end
+local function get_tabline_content()
+	local cur_buf = vim.api.nvim_get_current_buf()
+	local res = { "   " }
 
-		C.tabline.buffer_content[buf] = table.concat({ " ", content, " " })
-		table.insert(C.tabline.buffer_list, buf)
-		vim.notify("C.tabline: added buffer " .. buf .. " to tabline", vim.log.levels.INFO)
-	end
+	for _i, buf in ipairs(vim.api.nvim_list_bufs()) do
+		if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted then
+			local ftype = vim.bo[buf].filetype
+			if not excluded_ftypes[ftype] then
+				local name = vim.api.nvim_buf_get_name(buf)
+				local trim = vim.trim(name)
+				if trim ~= "" then
+					local icon = icon_mod.get_icon(buf, name)
+					local parts = vim.split(name, "/", { plain = true })
+					local fname = parts[#parts]
+					local content = string.format(" %s: %s %s ", buf, icon, fname)
 
-	if event == "BufDelete" and C.tabline.buffer_content[buf] then
-		local idx = -1
-		for i, _buf in ipairs(C.tabline.buffer_list) do
-			if _buf == buf then
-				idx = i
-				break
-			end
-		end
-		if idx ~= -1 then
-			C.tabline.buffer_content[buf] = nil
-			table.remove(C.tabline.buffer_list, idx)
-			if vim.bo[buf].filetype ~= "directory" then
-				vim.notify("C.tabline: removed buffer " .. buf .. " from tabline", vim.log.levels.INFO)
+					if buf == cur_buf then
+						table.insert(res, string.format("%%#ActiveBuf#%s%%*", content))
+					else
+						table.insert(res, content)
+					end
+				end
 			end
 		end
 	end
+
+	if #res == 1 then
+		return "   "
+	end
+
+	return table.concat(res, " ")
 end
 
 function _G.tabline_content()
-	if not C.tabline or not C.tabline.buffer_content then
-		return "    "
+	local res
+	ok, res = pcall(get_tabline_content)
+	if not ok then
+		return "   "
 	end
-
-	local result = { "    " }
-	for _i, buf in ipairs(C.tabline.buffer_list) do
-		local content = C.tabline.buffer_content[buf]
-		if vim.api.nvim_get_current_buf() == buf then
-			table.insert(result, table.concat({ "%#ActiveBuf#", content, "%*" }))
-		else
-			table.insert(result, content)
-		end
-	end
-
-	if #result == 0 then
-		return "    "
-	end
-
-	return table.concat(result, " ")
+	return res
 end
 
-local function setup_autocmds(augroup)
-	vim.api.nvim_create_autocmd({ "BufAdd" }, {
-		group = augroup,
-		callback = function(args)
-			local buf = args.buf
-			if not C.tabline.buffer_content[buf] then
-				update_tabline(buf, args.event)
-			end
-		end,
-	})
-	vim.api.nvim_create_autocmd({ "BufDelete" }, {
-		group = augroup,
-		nested = true,
-		callback = function(args)
-			local buf = args.buf
-			if C.tabline.buffer_content[buf] then
-				update_tabline(buf, args.event)
-			end
-		end,
-	})
-end
+local function setup_autocmds(augroup) end
 
 local function setup_keymaps()
 	vim.keymap.set("n", "<leader>rb", function()
@@ -116,7 +82,6 @@ local function setup_keymaps()
 end
 
 function C.setup()
-	C.tabline = { buffer_content = {}, buffer_list = {} }
 	vim.opt.showtabline = 2
 	vim.opt.tabline = "%!v:lua.tabline_content()"
 	vim.api.nvim_set_hl(0, "ActiveBuf", color_mod.colors.active)

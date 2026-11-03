@@ -9,7 +9,7 @@ local function setup_autocmds(augroup)
 			vim.opt_local.relativenumber = true
 			vim.opt_local.number = true
 			-- close the pager with <esc>
-			vim.keymap.set("n", "<esc>", ":bd<cr>", { buffer = buf, silent = true })
+			vim.keymap.set("n", "<esc>", "<cmd>bd<cr>", { buffer = buf, silent = true })
 		end,
 	})
 end

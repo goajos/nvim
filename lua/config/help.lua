@@ -7,21 +7,19 @@ if not ok then
 end
 
 local function toggle_help()
-	if C.state.is_open and C.state.win then
+	if C.state.win and vim.api.nvim_win_is_valid(C.state.win) then
 		vim.api.nvim_win_close(C.state.win, true)
-		C.state.is_open = false
+		C.state.win = nil
 		return
 	end
 
-	if C.state.buf then
+	if C.state.buf and vim.api.nvim_buf_is_valid(C.state.buf) then
 		C.state.win = render_mod.render_floating_win(C.state.buf, nil, 100)
 		vim.opt_local.relativenumber = false
 		vim.opt_local.number = false
 	else
 		vim.notify("C.help: no open help buffer", vim.log.levels.INFO)
 	end
-
-	C.state.is_open = true
 end
 
 local function setup_autocmds(augroup)
@@ -30,10 +28,8 @@ local function setup_autocmds(augroup)
 		pattern = { "help", "checkhealth" },
 		callback = function(args)
 			vim.api.nvim_win_close(args.win, true)
-			if C.state.buf ~= args.buf then
-				C.state.buf = args.buf
-				toggle_help()
-			end
+			C.state.buf = args.buf
+			toggle_help()
 		end,
 	})
 end
@@ -57,7 +53,7 @@ local function setup_keymaps()
 end
 
 function C.setup()
-	C.state = { buf = nil, win = nil, is_open = false }
+	C.state = { buf = nil, win = nil }
 	local augroup = vim.api.nvim_create_augroup("HelpUserAuGroup", { clear = true })
 	setup_autocmds(augroup)
 	setup_keymaps()
