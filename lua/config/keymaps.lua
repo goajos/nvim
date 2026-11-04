@@ -43,4 +43,12 @@ end, true, "Open command line with find at current head dir", { expr = true })
 km({ "n", "x" }, "gy", '"+y', true, "Yank to system clipboard")
 km({ "n", "x" }, "gp", '"+p', true, "Paste after from system clipboard")
 km({ "n", "x" }, "gP", '"+P', true, "Paste before from system clipboard")
-km({ "x" }, "p", '"_dP', true, "Paste without yanking selection")
+
+-- do things without updating the register
+km("n", "x", '"_x', true, "Delete char without updating the register")
+km({ "n", "v" }, "<leader>p", '"0p', true, "Paste after without updating the register")
+km({ "n", "v" }, "<leader>P", '"0P', true, "Paste before without updating the register")
+km({ "n", "v" }, "<leader>c", '"_c', true, "Modify after without updating the register")
+km({ "n", "v" }, "<leader>C", '"_C', true, "Modify to end of line without updating the register")
+km({ "n", "v" }, "<leader>x", '"_d', true, "Delete after without updating the register")
+km({ "n", "v" }, "<leader>X", '"_D', true, "Delete to end of line without updating the register")

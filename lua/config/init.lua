@@ -13,7 +13,9 @@ require("config.terminal")
 local o = vim.o
 
 o.termguicolors = true -- enable 24-bit RGB color in TUI
+o.updatetime = 500 -- default 4000, cursorhold timing
 o.timeoutlen = 250 -- default 1000, decrease wait time for mapped sequences
+o.ttimeoutlen = 0 -- default 50, time to wait for code sequence
 o.mouse = "a" -- mouse works in all modes
 o.confirm = true -- confirmation dialog
 
@@ -39,13 +41,18 @@ o.relativenumber = true -- relative line numbers
 o.signcolumn = "yes" -- when and how to display the sign column
 o.list = true -- show <tab>, <eol>, ...
 
--- o.ignorecase = false
--- o.smartcase = true -- no ignore case with uppercase if ignorecase is true
-
 o.winborder = "rounded"
+o.pumblend = 10 -- pum transparency
 
 o.wildmode = "noselect:lastused" -- no preselect and sort buffers by last used
 
 -- vim.opt :append helper
 vim.opt.guicursor = "n-v-c-sm:block" -- default cursor
 vim.opt.guicursor:append("i-ci-t:block-blinkwait0-blinkon500-blinkoff250-TermCursor")
+
+-- o.ignorecase = false
+-- o.smartcase = true -- no ignore case with uppercase if ignorecase is true
+
+-- MatchParen does this as well?
+-- o.showmatch = true -- show matching bracket
+-- o.matchtime = 1
