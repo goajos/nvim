@@ -108,14 +108,15 @@ local function setup_autocmds(augroup)
 		callback = function(args)
 			local buf = args.buf
 			local name = vim.api.nvim_buf_get_name(buf)
-			C.git_diff[buf] = get_git_diff(name)
+			C.git_diff[name] = get_git_diff(name)
 		end,
 	})
 	vim.api.nvim_create_autocmd({ "BufDelete" }, {
 		group = augroup,
 		callback = function(args)
 			local buf = args.buf
-			C.git_diff[buf] = nil
+			local name = vim.api.nvim_buf_get_name(buf)
+			C.git_diff[name] = nil
 		end,
 	})
 end
