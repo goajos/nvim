@@ -20,7 +20,7 @@ end
 local function setup_autocmds(augroup)
 	vim.api.nvim_create_autocmd("QuickFixCmdPost", {
 		group = augroup,
-		pattern = { "grep", "copen" },
+		pattern = { "grep!", "copen" },
 		callback = function()
 			local qf = vim.fn.getqflist({ size = 0 })
 			if qf.size > 0 then

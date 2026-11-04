@@ -103,11 +103,11 @@ local function setup_keymaps()
 		if vim.api.nvim_buf_is_valid(cnt) and vim.bo[cnt].buflisted then
 			return "<cmd>" .. cnt .. "b<cr>"
 		end
-		vim.notify("C.statusline: invalid buffer " .. cnt .. " for switching", vim.log.levels.INFO)
+		vim.notify("C.tabline: invalid buffer " .. cnt .. " for switching", vim.log.levels.INFO)
 	end, { expr = true, silent = true, desc = "Switch to # or previous buffer if valid" })
 	vim.keymap.set("n", "<leader>B", function()
 		vim.cmd("ls")
-	end, { silent = true, desc = "Remove all buffers and update the tabline" })
+	end, { silent = true, desc = "List all buffers" })
 end
 
 function C.setup()

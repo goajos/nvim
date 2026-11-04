@@ -1,4 +1,3 @@
-local opts = { silent = true }
 local function km(modes, lhs, rhs, silent, desc, extra)
 	vim.keymap.set(modes, lhs, rhs, vim.tbl_extend("force", { silent = silent, desc = desc }, extra or {}))
 end

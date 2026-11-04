@@ -73,12 +73,13 @@ local hl_map = {
 
 function C.setup()
 	vim.diagnostic.config({
+		severity_sort = true,
 		status = {
 			function(scnt)
 				local items = {}
 				for severity in ipairs(vim.diagnostic.severity) do
 					local dcnt = scnt[severity] or 0
-					table.insert(items, ("%%#%s#%s %s"):format(hl_map[severity], dcnt))
+					table.insert(items, ("%%#%s# %s"):format(hl_map[severity], dcnt))
 				end
 				return table.concat(items, " ")
 			end,
