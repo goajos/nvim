@@ -17,8 +17,16 @@ local function setup_autocmds(augroup)
 		group = augroup,
 		callback = function(args)
 			local buf = args.buf
-			local toggle = not vim.diagnostic.is_enabled({ bufnr = buf })
-			vim.diagnostic.enable(toggle, { bufnr = args.buf })
+			if args.event == "InsertEnter" then
+				if vim.diagnostic.is_enabled({ bufnr = buf }) then
+					vim.b[buf].diagnostic_toggle = true
+					vim.diagnostic.enable(false, { bufnr = args.buf })
+				end
+			-- do not turn on diagnostics on insertleave if it's already toggled off
+			elseif vim.b[buf].diagnostic_toggle then
+				vim.b[buf].diagnostic_toggle = nil
+				vim.diagnostic.enable(true, { bufnr = args.buf })
+			end
 		end,
 	})
 end
@@ -70,7 +78,7 @@ function C.setup()
 				local items = {}
 				for severity in ipairs(vim.diagnostic.severity) do
 					local dcnt = scnt[severity] or 0
-					table.insert(items, ("%%#%s#%s %s"):format(hl_map[severity], nil, dcnt))
+					table.insert(items, ("%%#%s#%s %s"):format(hl_map[severity], dcnt))
 				end
 				return table.concat(items, " ")
 			end,

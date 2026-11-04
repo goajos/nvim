@@ -16,7 +16,6 @@ end
 
 function C.setup()
 	local augroup = vim.api.nvim_create_augroup("DirUserAuGroup", { clear = true })
-	-- C.prev_is_dir = false
 	setup_autocmds(augroup)
 end
 

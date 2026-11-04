@@ -1,39 +1,24 @@
 local C = {}
 
-function C.render_cmdline_win(win)
-	local height = math.floor(vim.o.lines * 0.2)
-	local width = math.floor(vim.o.columns * 0.4)
-	local row = math.floor((vim.o.lines - height) / 2)
-	local col = math.floor((vim.o.columns - width) / 2)
-	vim.api.nvim_win_set_config(win, {
-		relative = "editor",
-		height = height,
-		width = width,
-		row = row,
-		col = col,
-		border = vim.o.winborder,
-	})
+function C.float(buf, h_scale, w_scale)
+	return vim.api.nvim_open_win(buf, true, C.config(h_scale or 0.8, w_scale or 0.8))
 end
 
-function C.render_floating_win(buf, max_height, max_width)
-	local height = math.floor(vim.o.lines * 0.8)
-	if max_height then
-		height = math.min(height, max_height)
-	end
-	local width = math.floor(vim.o.columns * 0.8)
-	if max_width then
-		width = math.min(width, max_width)
-	end
-	local row = math.floor((vim.o.lines - height) / 2)
-	local col = math.floor((vim.o.columns - width) / 2)
-	return vim.api.nvim_open_win(buf, true, {
+function C.cmdline(win, h_scale, w_scale)
+	vim.api.nvim_win_set_config(win, C.config(h_scale or 0.2, w_scale or 0.4))
+end
+
+function C.config(h_scale, w_scale)
+	local h, w = vim.o.lines * h_scale, vim.o.columns * w_scale
+	h, w = math.floor(h), math.floor(w)
+	return {
 		relative = "editor",
-		height = height,
-		width = width,
-		row = row,
-		col = col,
+		height = h,
+		width = w,
+		row = math.floor((vim.o.lines - h) / 2),
+		col = math.floor((vim.o.columns - w) / 2),
 		border = vim.o.winborder,
-	})
+	}
 end
 
 return C

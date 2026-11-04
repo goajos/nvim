@@ -1,13 +1,7 @@
 vim.pack.add({ "https://github.com/stevearc/conform.nvim" })
 local P = {}
 
-local function setup_autocmds(augroup)
-	vim.api.nvim_create_autocmd("BufEnter", {
-		group = augroup,
-		callback = function(args)
-			vim.b[args.buf].disable_autoformat = false
-		end,
-	})
+local function setup_autocmds()
 	vim.api.nvim_create_user_command("FormatDisable", function()
 		local buf = vim.api.nvim_get_current_buf()
 		vim.b[buf].disable_autoformat = true
@@ -51,8 +45,8 @@ function P.setup()
 			return { timeout_ms = 500, lsp_format = "fallback" }
 		end,
 	})
-	local augroup = vim.api.nvim_create_augroup("ConformUserAuGroup", { clear = true })
-	setup_autocmds(augroup)
+	local _augroup = vim.api.nvim_create_augroup("ConformUserAuGroup", { clear = true })
+	setup_autocmds()
 	setup_keymaps()
 end
 

@@ -39,7 +39,8 @@ o.relativenumber = true -- relative line numbers
 o.signcolumn = "yes" -- when and how to display the sign column
 o.list = true -- show <tab>, <eol>, ...
 
-o.smartcase = true -- no ignore case
+-- o.ignorecase = false
+-- o.smartcase = true -- no ignore case with uppercase if ignorecase is true
 
 o.winborder = "rounded"
 

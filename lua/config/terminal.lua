@@ -16,16 +16,17 @@ local function toggle_terminal()
 	if not C.state.buf or not vim.api.nvim_buf_is_valid(C.state.buf) then
 		C.state.buf = vim.api.nvim_create_buf(false, true)
 		vim.bo[C.state.buf].bufhidden = "hide"
-		C.state.win = render_mod.render_floating_win(C.state.buf, nil, nil)
+		vim.bo[C.state.buf].filetype = "terminal"
+		C.state.win = render_mod.float(C.state.buf, nil, nil)
 		vim.fn.jobstart("bash", { term = true })
 	else
-		C.state.win = render_mod.render_floating_win(C.state.buf, nil, nil)
+		C.state.win = render_mod.float(C.state.buf, nil, nil)
 	end
 
 	-- vim.cmd("startinsert")
 end
 
-local function setup_autocmds(augroup) end
+local function setup_autocmds() end
 
 local function setup_keymaps()
 	vim.keymap.set("t", "<esc>", "<c-\\><c-n>", { silent = true, desc = "HideTerminalal buffer" })
@@ -35,8 +36,8 @@ end
 
 function C.setup()
 	C.state = { buf = nil, win = nil }
-	local augroup = vim.api.nvim_create_augroup("TerminalUserAuGroup", { clear = true })
-	setup_autocmds(augroup)
+	local _augroup = vim.api.nvim_create_augroup("TerminalUserAuGroup", { clear = true })
+	setup_autocmds()
 	setup_keymaps()
 end
 

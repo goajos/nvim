@@ -19,7 +19,6 @@ local function setup_keymaps()
 end
 
 function C.setup()
-	C.state = { config = nil }
 	local augroup = vim.api.nvim_create_augroup("PagerUserAuGroup", { clear = true })
 	setup_autocmds(augroup)
 	setup_keymaps()
@@ -27,6 +26,7 @@ function C.setup()
 	-- vim.opt :append helper
 	-- vim.opt.messagesopt = "hit-enter,history:500,progress:c" -- default mopt
 	vim.opt.messagesopt = "hit-enter,history:10000,progress:c"
+	-- m will turn a message buffer into a pager (copyable)
 	vim.opt.messagesopt:append("pager:m") -- p opens the pager for [+x] messages
 	vim.opt.messagesopt:append("maxheight:50") -- [+x] messages after 50 lines (default 50)
 end

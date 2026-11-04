@@ -46,7 +46,7 @@ local function setup_autocmds(augroup)
 			-- /: forward search
 			-- ?: backward search
 			if cmdtype == ":" or cmdtype == "/" or cmdtype == "?" then
-				render_mod.render_cmdline_win(cmdline_win)
+				render_mod.cmdline(cmdline_win)
 			end
 		end,
 	})

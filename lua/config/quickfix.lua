@@ -20,14 +20,17 @@ end
 local function setup_autocmds(augroup)
 	vim.api.nvim_create_autocmd("QuickFixCmdPost", {
 		group = augroup,
+		pattern = { "grep", "copen" },
 		callback = function()
 			local qf = vim.fn.getqflist({ size = 0 })
 			if qf.size > 0 then
-				vim.cmd("copen")
+				vim.schedule(function()
+					vim.cmd("copen")
+				end)
 			else
 				-- schedule to not silence the notify
 				vim.schedule(function()
-					vim.notify("C.grep: empty quickfix list", vim.log.levels.INFO)
+					vim.notify("C.quickfix: empty quickfix list", vim.log.levels.INFO)
 				end)
 			end
 		end,
@@ -46,7 +49,7 @@ local function setup_keymaps()
 			vim.fn.setqflist({})
 			vim.cmd("cclose")
 		else
-			vim.notify("C.grep: no open quickfix list", vim.log.levels.INFO)
+			vim.notify("C.quickfix: no open quickfix list", vim.log.levels.INFO)
 		end
 	end, { silent = true, desc = "Remove the quickfix list" })
 end
