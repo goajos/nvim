@@ -42,7 +42,7 @@ local function setup_keymaps()
 			vim.notify("C.diagnostic: disabled diagnostics for current buffer " .. buf, vim.log.levels.INFO)
 		end
 	end, { silent = true, desc = "Toggle buffer diagnostics" })
-	vim.keymap.set("n", "<leader>qd", function()
+	vim.keymap.set("n", "<leader>dq", function()
 		-- 0 for current buffer
 		local diagnostics = vim.diagnostic.get(0)
 		if #diagnostics ~= 0 then
@@ -52,16 +52,6 @@ local function setup_keymaps()
 			vim.notify("C.diagnostic: no diagnostics for current buffer", vim.log.levels.INFO)
 		end
 	end, { silent = true, desc = "Current buffer diagnostics to quickfix list" })
-	vim.keymap.set("n", "<leader>qD", function()
-		-- nil for all buffers
-		local diagnostics = vim.diagnostic.get(nil)
-		if #diagnostics ~= 0 then
-			vim.fn.setqflist(vim.diagnostic.toqflist(diagnostics))
-			vim.cmd("copen")
-		else
-			vim.notify("C.diagnostic: no diagnostics for all buffers", vim.log.levels.INFO)
-		end
-	end, { silent = true, desc = "All buffer diagnostics to quickfix list" })
 end
 
 local hl_map = {

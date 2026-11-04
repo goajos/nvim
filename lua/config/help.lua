@@ -55,7 +55,7 @@ local function setup_keymaps()
 		if cword ~= "" then
 			toggle_help(cword)
 		end
-	end, { silent = true, desc = "Open the cmdline with help and insert wordt under cursor" })
+	end, { silent = true, desc = "Open the cmdline with help and insert cword" })
 	vim.keymap.set("n", "<leader>th", toggle_help, { silent = true, desc = "Toggle help" })
 end
 

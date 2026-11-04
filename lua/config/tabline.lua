@@ -94,10 +94,10 @@ end
 local function setup_keymaps()
 	vim.keymap.set("n", "<leader>rb", function()
 		vim.cmd("bd")
-	end, { silent = true, desc = "Remove the current buffer and update the tabline" })
+	end, { silent = true, desc = "Remove the current buffer" })
 	vim.keymap.set("n", "<leader>rB", function()
 		vim.cmd("%bd")
-	end, { silent = true, desc = "Remove all buffers and update the tabline" })
+	end, { silent = true, desc = "Remove all buffers" })
 	vim.keymap.set("n", "<leader>b", function()
 		local cnt = vim.v.count > 0 and vim.v.count or vim.fn.bufnr("#")
 		if vim.api.nvim_buf_is_valid(cnt) and vim.bo[cnt].buflisted then

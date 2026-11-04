@@ -8,17 +8,17 @@ local P = {}
 local function setup_autocmds() end
 
 local function setup_keymaps()
-	vim.keymap.set("n", "<leader>dt", "<cmd>DapViewToggle<cr>", { desc = "Toggle dap view" })
-	vim.keymap.set("n", "<leader>dw", "<cmd>DapViewWatch<cr>", { desc = "Dap view watch" })
+	vim.keymap.set("n", "<leader>dt", "<cmd>DapViewToggle<cr>", { desc = "Toggle DapView" })
+	vim.keymap.set("n", "<leader>dw", "<cmd>DapViewWatch<cr>", { desc = "Watch DapView" })
 	vim.keymap.set("n", "<leader>db", "<cmd>DapToggleBreakpoint<cr>", { desc = "Toggle breakpoint on current line" })
 	vim.keymap.set("n", "<leader>dl", function()
 		require("osv").launch({ port = 8086 })
 	end, { desc = "Start osv server" })
 
 	-- vscode keybindings
-	vim.keymap.set("n", "<f5>", "<cmd>DapContinue<cr>", { desc = "Continue the dap debugger" })
+	vim.keymap.set("n", "<f5>", "<cmd>DapContinue<cr>", { desc = "Continue the debugger" })
 	-- vim.keymap.set("n", "<s-f5>", "<cmd>DapTerminate<cr>", { desc = "Terminate the dap debugger" })
-	vim.keymap.set("n", "<f17>", "<cmd>DapTerminate<cr>", { desc = "Terminate the dap debugger" })
+	vim.keymap.set("n", "<f17>", "<cmd>DapTerminate<cr>", { desc = "Terminate the debugger" })
 	vim.keymap.set("n", "<f9>", "<cmd>DapToggleBreakpoint<cr>", { desc = "Toggle breakpoint on current line" })
 	vim.keymap.set("n", "<f10>", "<cmd>DapStepOver<cr>", { desc = "Step over" })
 	vim.keymap.set("n", "<f11>", "<cmd>DapStepInto<cr>", { desc = "Step into" })

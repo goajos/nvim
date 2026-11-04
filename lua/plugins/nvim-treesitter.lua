@@ -24,37 +24,55 @@ local function setup_autocmds(augroup)
 end
 
 local function setup_keymaps()
-	-- select
+	-- select: lookahead will jump cursor forward if possible
+	local ts_select = require("nvim-treesitter-textobjects.select")
 	vim.keymap.set({ "x", "o" }, "am", function()
-		require("nvim-treesitter-textobjects.select").select_textobject("@function.outer", "textobjects")
+		ts_select.select_textobject("@function.outer", "textobjects", { lookahead = true })
 	end, { desc = "Select the outer function textobject" })
 	vim.keymap.set({ "x", "o" }, "im", function()
-		require("nvim-treesitter-textobjects.select").select_textobject("@function.inner", "textobjects")
+		ts_select.select_textobject("@function.inner", "textobjects", { lookahead = true })
 	end, { desc = "Select the inner function textobject" })
 	vim.keymap.set({ "x", "o" }, "ac", function()
-		require("nvim-treesitter-textobjects.select").select_textobject("@class.outer", "textobjects")
+		ts_select.select_textobject("@class.outer", "textobjects", { lookahead = true })
 	end, { desc = "Select the outer class textobject" })
 	vim.keymap.set({ "x", "o" }, "ic", function()
-		require("nvim-treesitter-textobjects.select").select_textobject("@class.inner", "textobjects")
+		ts_select.select_textobject("@class.inner", "textobjects", { lookahead = true })
 	end, { desc = "Select the inner class textobject" })
+	-- TODO: do we wnat more @textobjects?
+
+	-- swap
+	local ts_swap = require("nvim-treesitter-textobjects.swap")
+	vim.keymap.set({ "n" }, "<leader>a", function()
+		ts_swap.swap_next("@parameter.inner")
+	end, { desc = "Swap the next parameter" })
+	vim.keymap.set({ "n" }, "<leader>A", function()
+		ts_swap.swap_previous("@parameter.outer")
+	end, { desc = "Swap the previous parameter" })
 
 	-- move
+	local ts_move = require("nvim-treesitter-textobjects.move")
 	vim.keymap.set({ "n", "x", "o" }, "]m", function()
-		require("nvim-treesitter-textobjects.move").goto_next_start("@function.outer", "textobjects")
+		ts_move.goto_next_start("@function.outer", "textobjects")
 	end, { desc = "Move to next function start" })
 	vim.keymap.set({ "n", "x", "o" }, "]M", function()
-		require("nvim-treesitter-textobjects.move").goto_next_end("@function.outer", "textobjects")
+		ts_move.goto_next_end("@function.outer", "textobjects")
 	end, { desc = "Move to next function end" })
 	vim.keymap.set({ "n", "x", "o" }, "[m", function()
-		require("nvim-treesitter-textobjects.move").goto_previous_start("@function.outer", "textobjects")
+		ts_move.goto_previous_start("@function.outer", "textobjects")
 	end, { desc = "Move to previous function start" })
 	vim.keymap.set({ "n", "x", "o" }, "[M", function()
-		require("nvim-treesitter-textobjects.move").goto_previous_end("@function.outer", "textobjects")
+		ts_move.goto_previous_end("@function.outer", "textobjects")
 	end, { desc = "Move to previous function end" })
 
+	-- repeat move
 	local ts_repeat_move = require("nvim-treesitter-textobjects.repeatable_move")
 	vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move_next)
 	vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_previous)
+	-- makes f/F/t/T also repeatable
+	vim.keymap.set({ "n", "x", "o" }, "f", ts_repeat_move.builtin_f_expr, { expr = true })
+	vim.keymap.set({ "n", "x", "o" }, "F", ts_repeat_move.builtin_F_expr, { expr = true })
+	vim.keymap.set({ "n", "x", "o" }, "t", ts_repeat_move.builtin_t_expr, { expr = true })
+	vim.keymap.set({ "n", "x", "o" }, "T", ts_repeat_move.builtin_T_expr, { expr = true })
 end
 
 -- in v:

@@ -5,10 +5,7 @@ C.colors = {
 	active = { bold = true, bg = "#285577", fg = "#ffffff" },
 	numberlinenr = { fg = "NvimLightGrey4" },
 	cursorlinenr = { bold = true, fg = "#ffffff" },
-	matchparen = { bold = cursor_hl.bold, bg = cursor_hl.bg },
-
-	-- inactive = { bg = "NvimDarkGrey3", fg = "NvimLightGrey3" },
-	-- sep = { bg = "NvimDarkGrey3" },
+	matchparen = { bg = cursor_hl.bg },
 }
 
 function C.setup()

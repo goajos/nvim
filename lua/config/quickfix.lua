@@ -20,7 +20,7 @@ end
 local function setup_autocmds(augroup)
 	vim.api.nvim_create_autocmd("QuickFixCmdPost", {
 		group = augroup,
-		pattern = { "grep!", "copen" },
+		pattern = { "grep", "copen" },
 		callback = function()
 			local qf = vim.fn.getqflist({ size = 0 })
 			if qf.size > 0 then
@@ -42,7 +42,7 @@ local function setup_keymaps()
 	vim.keymap.set("n", "<leader>g", ":silent grep! ", { desc = "Open command line with silent grep" })
 	vim.keymap.set("n", "<leader>G", function()
 		vim.fn.feedkeys((":silent grep! %s"):format(vim.fn.expand("<cword>")), "n")
-	end, { silent = true, desc = "Open the cmdline with silent grep and insert wordt under cursor" })
+	end, { silent = true, desc = "Open the cmdline with silent grep and insert cword" })
 	vim.keymap.set("n", "<leader>tq", toggle_quickfix, { silent = true, desc = "Toggle the quickfix list" })
 	vim.keymap.set("n", "<leader>rq", function()
 		if is_qf_open() then
