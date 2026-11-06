@@ -23,7 +23,7 @@ o.swapfile = false -- use swapfile for a buffer
 o.backup = false -- keep backup file after overwriting a file
 o.autoread = true -- auto read file when changed from the outside
 o.undofile = true -- save undo information in a file
-local undodir = "/tmp/nvim/undo/"
+local undodir = vim.fn.expand("/tmp/nvim/undo/")
 if vim.fn.isdirectory(undodir) == 0 then
 	vim.fn.mkdir(undodir, "p")
 end
