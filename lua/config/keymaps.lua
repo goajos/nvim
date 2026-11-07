@@ -22,7 +22,7 @@ km("n", "<leader>E", function()
 end, true, "Open current head dir in current buffer")
 
 -- local buf = require("config.buf")
-km("n", "<leader><esc>", "<cmd>quitall<cr>", true, "Quitall neovim")
+km("n", "<leader>q", "<cmd>quitall<cr>", true, "Quitall neovim")
 km("n", "<leader><s-r>", function()
 	vim.cmd("restart")
 end, true, "Restart neovim")
