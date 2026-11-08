@@ -23,9 +23,9 @@ local function toggle_terminal()
 		vim.bo[C.state.buf].bufhidden = "hide"
 		vim.bo[C.state.buf].filetype = "terminal"
 		C.state.win = render_mod.float(C.state.buf, nil, nil)
-		if vim.fn.has("mac") then
+		if vim.uv.os_uname().sysname == "Mac" then
 			vim.fn.jobstart("/opt/homebrew/bin/bash", { term = true })
-		else
+		elseif vim.uv.os_uname().sysname == "Linux" then
 			vim.fn.jobstart("bash", { term = true })
 		end
 	else
