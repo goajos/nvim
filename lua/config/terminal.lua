@@ -12,18 +12,13 @@ local function toggle_terminal()
 		C.state.win = nil
 		return
 	end
-	-- if vim.fn.has("mac") then
-	-- 	command = "/opt/homebrew/opt/lldb/bin/lldb-dap"
-	-- else
-	-- 	command = "/usr/bin/lldb-dap"
-	-- end
 
 	if not C.state.buf or not vim.api.nvim_buf_is_valid(C.state.buf) then
 		C.state.buf = vim.api.nvim_create_buf(false, true)
 		vim.bo[C.state.buf].bufhidden = "hide"
 		vim.bo[C.state.buf].filetype = "terminal"
 		C.state.win = render_mod.float(C.state.buf, nil, nil)
-		if vim.uv.os_uname().sysname == "Mac" then
+		if vim.uv.os_uname().sysname == "Darwin" then
 			vim.fn.jobstart("/opt/homebrew/bin/bash", { term = true })
 		elseif vim.uv.os_uname().sysname == "Linux" then
 			vim.fn.jobstart("bash", { term = true })
